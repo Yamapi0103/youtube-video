@@ -2,7 +2,10 @@
   <div class="video-wrap m-3 d-flex flex-wrap jc-start" v-if="videos">
     <div class="video px-2 mb-4" v-for="(item ,index) in videos" :key="index">
       <div class="h-100">
-        <img :src="item.snippet.thumbnails.medium.url" />
+        <figure>
+          <img :src="item.snippet.thumbnails.medium.url" />
+          <span class="time m-1 p-1 fs-xxs">{{durationParser(item.contentDetails.duration)}}</span>
+        </figure>
         <div class="d-flex p-1 ai-center">
           <div class="title ellipsis two-line flex-1">{{item.snippet.title}}</div>
           <span
@@ -41,9 +44,50 @@
     props: {
       videos: { type: Array, required: true }
     },
-    computed: {
-    },
+    computed: {},
     methods: {
+      durationParser(str) {
+        let hour = /\d*H/.exec(str);
+        let min = /\d*M/.exec(str);
+        let sec = /\d*S/.exec(str);
+        let secondLayerParser = function(h, m, s) {
+          let hour = "",
+            min = "",
+            sec = "";
+          /*解析小時*/
+          /*parsing hour*/
+          if (h) {
+            hour = /\d*/.exec(h)[0] + ":";
+          } else {
+            hour = "";
+          }
+          /*解析分鐘*/
+          /*parsing minute*/
+          if (m) {
+            min = /\d*/.exec(m)[0];
+            if (min.length === 1) {
+              min = "0" + min;
+            }
+          } else {
+            min = "00";
+          }
+          /*解析秒*/
+          /*parsing second*/
+          if (s) {
+            sec = /\d*/.exec(s)[0];
+            if (sec.length === 1) {
+              sec = "0" + sec;
+            }
+          } else {
+            sec = "00";
+          }
+          /*回傳完成的影片時間格式*/
+          /*return digit time-code*/
+          return hour + min + ":" + sec;
+        };
+        return secondLayerParser(hour, min, sec);
+
+      },
       IsFav(id) {
         return this.ids.includes(id);
       },
@@ -114,11 +158,22 @@
       border: 1px solid map-get($colors, "light-1");
       border-radius: 0.3846rem;
     }
-
-    img {
+    figure {
       width: 100%;
-      height: auto;
-      object-fit: cover;
+      position: relative;
+      img {
+        width: 100%;
+        // height: auto;
+        object-fit: cover;
+      }
+      span.time {
+        position: absolute;
+        bottom: 0%;
+        right: 0%;
+        background: map-get($colors, "dark");
+        color: map-get($colors, "white");
+        // border-radius: 0.3846rem;
+      }
     }
     div {
       &.title {

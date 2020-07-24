@@ -36,7 +36,7 @@
     // },
     async created() {
       let res = await this.fetchVideo({
-        part: "snippet,statistics",
+        part: "snippet,statistics,contentDetails",
         maxResults: this.count
       }); // 撈count筆
       this.videos = res.data.items;
@@ -55,7 +55,7 @@
         console.log("pageNum", pageNum);
         this.pageTokenPerPage = JSON.parse(localStorage.pageTokenPerPage);
         let res = await this.fetchVideo({
-          part: "snippet,statistics",
+          part: "snippet,statistics,contentDetails",
           maxResults: this.count,
           pageToken:
             pageNum - 2 >= 0
