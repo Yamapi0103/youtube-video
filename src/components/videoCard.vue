@@ -14,7 +14,7 @@
         <div class="channel-title p-1">{{item.snippet.channelTitle}}</div>
         <div class="d-flex p-1">
           <span class="flex-1">上傳日期:{{item.snippet.publishedAt | date}}</span>
-          <span>觀看次數:{{views(item.statistics.viewCount)}}</span>
+          <span>觀看次數: {{views(item.statistics.viewCount)}}</span>
         </div>
         <!-- <div class="ellipsis five-line">
             {{item.snippet.description}}
