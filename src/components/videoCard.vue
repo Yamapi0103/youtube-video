@@ -1,6 +1,6 @@
 <template>
   <div class="video-wrap m-3 d-flex flex-wrap jc-start" v-if="videos">
-    <div class="video px-2 mb-4" v-for="(item ,index) in videos" :key="index">
+    <router-link to="/video" tag="div" class="video px-2 mb-4" v-for="(item ,index) in videos" :key="index">
       <div class="h-100">
         <figure>
           <img :src="item.snippet.thumbnails.medium.url" />
@@ -23,7 +23,7 @@
             {{item.snippet.description}}
         </div>-->
       </div>
-    </div>
+    </router-link>
   </div>
 </template>
 

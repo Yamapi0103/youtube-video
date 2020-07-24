@@ -2,9 +2,12 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">首頁</router-link> |
-      <router-link to="/collect">收藏</router-link>
+      <router-link to="/collect">收藏</router-link> |
+      <router-link to="/video">影片</router-link>
     </div>
     <router-view />
+        <!-- <router-view :key="$route.path"></router-view> -->
+
   </div>
 </template>
 
