@@ -26,7 +26,7 @@
       fetchFavVideo(id) {
         return this.$http.get("videos", {
           params: {
-            part: "snippet,statistics",
+            part: "snippet,statistics,contentDetails",
             ...id,
             key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
           }
