@@ -1,6 +1,9 @@
 <template>
-  <div>
+  <div class="video-page">
     <video-player :options="videoOptions"/>
+    <div class="mt-3 text-center">
+    預設播放這支影片
+    </div>
   </div>
 </template>
 
@@ -8,7 +11,7 @@
   import VideoPlayer from "../components/videoPlayer";
 
   export default {
-    name: "VideoExample",
+    name: "VideoPage",
     components: {
       VideoPlayer
     },
@@ -27,3 +30,4 @@
       };
     }
   };
+</script>

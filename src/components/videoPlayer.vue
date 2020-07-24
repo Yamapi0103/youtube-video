@@ -1,7 +1,5 @@
 <template>
-    <div>
         <video ref="videoPlayer" class="video-js"></video>
-    </div>
 </template>
 
 <script>
@@ -37,3 +35,8 @@ export default {
     }
 }
 </script>
+<style lang="scss">
+.video-js {
+  margin: 0 auto;
+}
+</style>

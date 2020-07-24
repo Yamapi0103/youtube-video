@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <VideoCard :videos="videos" v-if="videos"></VideoCard>
+    <videoCard :videos="videos" v-if="videos"></videoCard>
     <div class="text-center">
       <paginate
         :page-count="pageCount"
