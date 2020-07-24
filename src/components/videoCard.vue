@@ -1,6 +1,6 @@
 <template>
-  <div class="video-wrap m-3 d-flex flex-wrap jc-start" v-if="videos">
-    <div class="video px-2 mb-4" v-for="(item ,index) in videos" :key="index">
+  <div class="video-wrap m-3 d-flex flex-wrap jc-center" v-if="videos">
+    <div class="video p-2 mb-4" v-for="(item ,index) in videos" :key="index">
       <div class="h-100">
         <router-link to="/video" tag="figure">
           <img :src="item.snippet.thumbnails.medium.url" />
@@ -15,9 +15,9 @@
           ></span>
         </div>
         <div class="channel-title p-1">{{item.snippet.channelTitle}}</div>
-        <div class="d-flex p-1">
-          <span class="flex-1">上傳日期:{{item.snippet.publishedAt | date}}</span>
-          <span>觀看次數: {{views(item.statistics.viewCount)}}</span>
+        <div class="d-flex p-1 flex-wrap">
+          <div class="updateTime">上傳日期:{{item.snippet.publishedAt | date}}</div>
+          <div>觀看次數: {{views(item.statistics.viewCount)}}</div>
         </div>
         <!-- <div class="ellipsis five-line">
             {{item.snippet.description}}
@@ -86,7 +86,6 @@
           return hour + min + ":" + sec;
         };
         return secondLayerParser(hour, min, sec);
-
       },
       IsFav(id) {
         return this.ids.includes(id);
@@ -159,6 +158,7 @@
       border-radius: 0.3846rem;
     }
     figure {
+      cursor: pointer;
       width: 100%;
       position: relative;
       img {
@@ -175,20 +175,28 @@
         // border-radius: 0.3846rem;
       }
     }
+    .updateTime {
+      flex: 1 0 auto;
+    }
     div {
       &.title {
         font-weight: bold;
-      }
-      &.channel-title {
       }
     }
   }
 }
 
-@media (min-width: 1080px) {
-  .home {
+@media screen and (min-width: 768px) and (max-width: 1200px) {
+  .video-wrap {
     .video {
-      padding: 10px;
+      width: 33.3%;
+    }
+  }
+}
+@media screen and (max-width: 768px) {
+  .video-wrap {
+    .video {
+      width: 50%;
     }
   }
 }
