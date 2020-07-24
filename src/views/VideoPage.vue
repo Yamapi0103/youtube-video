@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import VideoPlayer from "../components/video";
+  import VideoPlayer from "../components/videoPlayer";
 
   export default {
     name: "VideoExample",
