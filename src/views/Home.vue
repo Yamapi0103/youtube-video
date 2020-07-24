@@ -15,7 +15,6 @@
 </template>
 
 <script>
-  // import dayjs from "dayjs";
   import VideoCard from "../components/videoCard";
 
   export default {

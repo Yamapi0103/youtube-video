@@ -1,11 +1,11 @@
 <template>
   <div class="video-wrap m-3 d-flex flex-wrap jc-start" v-if="videos">
-    <router-link to="/video" tag="div" class="video px-2 mb-4" v-for="(item ,index) in videos" :key="index">
+    <div class="video px-2 mb-4" v-for="(item ,index) in videos" :key="index">
       <div class="h-100">
-        <figure>
+        <router-link to="/video" tag="figure">
           <img :src="item.snippet.thumbnails.medium.url" />
           <span class="time m-1 p-1 fs-xxs">{{durationParser(item.contentDetails.duration)}}</span>
-        </figure>
+        </router-link>
         <div class="d-flex p-1 ai-center">
           <div class="title ellipsis two-line flex-1">{{item.snippet.title}}</div>
           <span
@@ -23,7 +23,7 @@
             {{item.snippet.description}}
         </div>-->
       </div>
-    </router-link>
+    </div>
   </div>
 </template>
 
