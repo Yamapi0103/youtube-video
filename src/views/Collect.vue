@@ -1,28 +1,51 @@
 <template>
   <div class="collect">
-    <VideoCard :videos="videos" v-if="videos"></VideoCard>
+    <VideoCard :videos="videoByPage" v-if="videoByPage"></VideoCard>
+    <div class="text-center">
+      <paginate
+        :page-count="pageCount"
+        :click-handler="jumpTo"
+        :prev-text="'Prev'"
+        :next-text="'Next'"
+        :container-class="'pagination'"
+        :page-class="'page-item'"
+      ></paginate>
+    </div>
   </div>
 </template>
 
 <script>
   import VideoCard from "../components/videoCard";
   export default {
+    name: "collect",
     components: {
       VideoCard
     },
     data() {
       return {
-        videos: null
+        videos: null, // 全部的喜歡影片
+        pageCount: 0, // 總共幾頁
+        count: 12, // 一頁幾個
+        // pageTokenPerPage: {}
+        videoByPage: null // 每頁的喜歡影片
       };
     },
-    created() {
+    async created() {
       let favId = JSON.parse(localStorage.id);
       if (favId.length <= 0) return;
-      this.fetchFavVideo({ id: favId.join(",") }).then(res => {
-        this.videos = res.data.items;
-      });
+      let res = await this.fetchFavVideo({ id: favId.join(",") }); // 撈count筆
+      this.videos = res.data.items;
+      this.pageCount = Math.ceil(res.data.pageInfo.totalResults / this.count);
+      this.videoByPage = this.videos.slice(0, this.count);
     },
     methods: {
+      jumpTo(pageNum) {
+        this.videoByPage = this.videos.slice(
+          (pageNum - 1) * this.count,
+          pageNum * this.count
+        );
+        console.log("object", this.videoByPage);
+      },
       fetchFavVideo(id) {
         return this.$http.get("videos", {
           params: {

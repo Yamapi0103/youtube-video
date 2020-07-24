@@ -39,7 +39,7 @@
         maxResults: this.count
       }); // 撈count筆
       this.videos = res.data.items;
-      this.pageCount = parseInt(res.data.pageInfo.totalResults / this.count);
+      this.pageCount = Math.ceil(res.data.pageInfo.totalResults / this.count);
       if (!localStorage.getItem("pageTokenPerPage")) {
         this.queryPageToken();
       }
