@@ -15,9 +15,6 @@ export default {
             }
         }
     },
-    created(){
-        console.log('in video', this.options);
-    },
     data() {
         return {
             player: null

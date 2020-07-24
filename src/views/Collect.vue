@@ -44,7 +44,6 @@
           (pageNum - 1) * this.count,
           pageNum * this.count
         );
-        console.log("object", this.videoByPage);
       },
       fetchFavVideo(id) {
         return this.$http.get("videos", {

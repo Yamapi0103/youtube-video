@@ -30,9 +30,6 @@
         pageTokenPerPage: {}
       };
     },
-    // mounted() {
-    //   console.log(window.innerWidth);
-    // },
     async created() {
       let res = await this.fetchVideo({
         part: "snippet,statistics,contentDetails",
@@ -51,7 +48,6 @@
     },
     methods: {
       async jumpTo(pageNum) {
-        console.log("pageNum", pageNum);
         this.pageTokenPerPage = JSON.parse(localStorage.pageTokenPerPage);
         let res = await this.fetchVideo({
           part: "snippet,statistics,contentDetails",
@@ -66,7 +62,6 @@
       async queryPageToken() {
         let i = 0;
         let res = await this.fetchVideo({ maxResults: this.count });
-        // let { nextPageToken } = res.data;
         this.pageTokenPerPage[i++] = { nextPageToken: res.data.nextPageToken }; // 第一筆沒有 prevPageToken
         while (res.data.nextPageToken) {
           // 還有下一頁就繼續撈
