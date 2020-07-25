@@ -60,6 +60,9 @@ p {
 .d-flex {
   display: flex;
 }
+.d-iflex{
+  display:inline-flex;
+}
 
 @each $key, $value in $flex-jc {
   .jc-#{$key} {

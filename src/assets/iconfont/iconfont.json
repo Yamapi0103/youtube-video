@@ -18,6 +18,13 @@
       "font_class": "heart1",
       "unicode": "e646",
       "unicode_decimal": 58950
+    },
+    {
+      "icon_id": "11983519",
+      "name": "youtube",
+      "font_class": "youtube",
+      "unicode": "ea07",
+      "unicode_decimal": 59911
     }
   ]
 }

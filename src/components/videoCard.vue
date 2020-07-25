@@ -1,5 +1,5 @@
 <template>
-  <div class="video-wrap m-3 d-flex flex-wrap jc-center" v-if="videos">
+  <div class="video-wrap m-3 d-flex flex-wrap" v-if="videos">
     <div class="video p-2 mb-4" v-for="(item ,index) in videos" :key="index">
       <div class="h-100">
         <router-link to="/video" tag="figure">
@@ -20,6 +20,9 @@
           <div class="updateTime">上傳日期: {{publishedByNow(item.snippet.publishedAt)}}</div>
           <div>觀看次數: {{views(item.statistics.viewCount)}}</div>
         </div>
+        <span class="iconfont icon-youtube d-iflex ai-center" @click="toYoutube(item.id)">
+          <span class="pl-2 fs-xxl text-info">前往youtube</span>
+        </span>
         <!-- <div class="ellipsis five-line">
             {{item.snippet.description}}
         </div>-->
@@ -47,6 +50,9 @@
     },
     computed: {},
     methods: {
+      toYoutube(id){
+        window.open('https://www.youtube.com/watch?v='+id,'_blank')
+      },
       publishedByNow(timeStr) {
         let published = new Date(timeStr);
         let now = new Date();
@@ -157,10 +163,13 @@
 .iconfont {
   font-size: 2rem !important;
   transition: 0.2s;
-  &.icon-heart1 {
+  &.icon-heart1,&.icon-youtube{
     color: red;
+  }  
+  &.icon-youtube{
+    cursor: pointer;
   }
-  &:hover {
+  &.icon-heart:hover {
     transform: scale(1.2);
     transition: 0.1s;
   }
