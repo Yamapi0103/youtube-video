@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <h2 class="text-center mb-4">各國的發燒影片</h2>
     <div id="condition" class="d-flex jc-center ai-center">
       國家:
       <select class="ml-2 p-1" v-model="selectRegion">
