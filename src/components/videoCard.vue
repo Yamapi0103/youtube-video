@@ -16,7 +16,8 @@
         </div>
         <div class="channel-title p-1">{{item.snippet.channelTitle}}</div>
         <div class="d-flex p-1 flex-wrap">
-          <div class="updateTime">上傳日期:{{item.snippet.publishedAt | date}}</div>
+          <!-- <div class="updateTime">上傳日期:{{item.snippet.publishedAt | date}}</div> -->
+          <div class="updateTime">上傳日期: {{publishedByNow(item.snippet.publishedAt)}}</div>
           <div>觀看次數: {{views(item.statistics.viewCount)}}</div>
         </div>
         <!-- <div class="ellipsis five-line">
@@ -36,16 +37,34 @@
         ids: JSON.parse(localStorage.getItem("id")) || []
       };
     },
-    filters: {
-      date(val) {
-        return dayjs(val).format("YYYY/MM/DD");
-      }
-    },
+    // filters: {
+    //   date(val) {
+    //     return dayjs(val).format("YYYY/MM/DD");
+    //   }
+    // },
     props: {
       videos: { type: Array, required: true }
     },
     computed: {},
     methods: {
+      publishedByNow(timeStr) {
+        let published = new Date(timeStr);
+        let now = new Date();
+        if (now.getFullYear() - published.getFullYear() > 0) {
+          return now.getUTCFullYear() - published.getFullYear() + "年前";
+        } else if (now.getMonth() - published.getMonth() > 0) {
+          return now.getMonth() - published.getMonth() + "個月前";
+        } else if (now.getDate() - published.getDate() > 0) {
+          let day = now.getDate() - published.getDate();
+          return day < 7 ? day + "天前" : parseInt(day / 7) + "週前";
+        } else if (now.getHours() - published.getHours() > 0) {
+          return now.getHours() - published.getHours() + "小時前";
+        } else if (now.getMinutes() - published.getMinutes() > 0) {
+          return now.getMinutes() - published.getMinutes() + "分鐘前";
+        } else {
+          return now.getSeconds() - published.getSeconds() + "秒前";
+        }
+      },
       durationParser(str) {
         let hour = /\d*H/.exec(str);
         let min = /\d*M/.exec(str);
