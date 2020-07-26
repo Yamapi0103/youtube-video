@@ -21,7 +21,7 @@
           <div>觀看次數: {{views(item.statistics.viewCount)}}</div>
         </div>
         <span class="iconfont icon-youtube d-iflex ai-center" @click="toYoutube(item.id)">
-          <span class="pl-2 fs-xxl text-info">前往youtube</span>
+          <span class="pl-2 text-info">前往youtube</span>
         </span>
         <!-- <div class="ellipsis five-line">
             {{item.snippet.description}}
@@ -164,7 +164,9 @@
   }
 }
 .iconfont {
-  font-size: 2rem !important;
+  &:before{
+    font-size: 1.8rem;
+  }
   transition: 0.2s;
   &.icon-heart1,
   &.icon-youtube {
