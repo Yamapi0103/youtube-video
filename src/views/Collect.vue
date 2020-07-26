@@ -33,7 +33,7 @@
     async created() {
       let favId = JSON.parse(localStorage.id);
       if (favId.length <= 0) return;
-      let res = await this.fetchFavVideo({ id: favId.join(",") }); // 撈count筆
+      let res = await this.fetchVideoById({ id: favId.join(",") }); // 撈count筆
       this.videos = res.data.items;
       this.pageCount = Math.ceil(res.data.pageInfo.totalResults / this.count);
       this.videoByPage = this.videos.slice(0, this.count);
@@ -45,7 +45,7 @@
           pageNum * this.count
         );
       },
-      fetchFavVideo(id) {
+      fetchVideoById(id) {
         return this.$http.get("videos", {
           params: {
             part: "snippet,statistics,contentDetails",

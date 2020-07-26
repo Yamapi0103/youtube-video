@@ -50,8 +50,8 @@
     },
     computed: {},
     methods: {
-      toYoutube(id){
-        window.open('https://www.youtube.com/watch?v='+id,'_blank')
+      toYoutube(id) {
+        window.open("https://www.youtube.com/watch?v=" + id, "_blank");
       },
       publishedByNow(timeStr) {
         let published = new Date(timeStr);
@@ -126,12 +126,15 @@
       },
       views(val) {
         let digit = this.getDigit(val);
-        if (digit >= 4) {
+        if (digit < 4) {
+          return val + "次";
+        }
+        if (digit === 4) { // 一萬~十萬以內 顯示小數點後一位 eg: 5.2萬
+          return (val / Math.pow(10, 4)).toFixed(1) + "萬次";
+        } else if (digit > 4) {
           return Math.floor(val / Math.pow(10, 4)) + "萬次";
         } else if (digit >= 8) {
           return Math.floor(val / Math.pow(10, 8)) + "億次";
-        } else {
-          return val + "次";
         }
       },
       getDigit(integer) {
@@ -163,10 +166,11 @@
 .iconfont {
   font-size: 2rem !important;
   transition: 0.2s;
-  &.icon-heart1,&.icon-youtube{
+  &.icon-heart1,
+  &.icon-youtube {
     color: red;
-  }  
-  &.icon-youtube{
+  }
+  &.icon-youtube {
     cursor: pointer;
   }
   &.icon-heart:hover {

@@ -1,8 +1,11 @@
 <template>
   <div class="home">
-    <h2 class="text-center mb-4">各國的發燒影片</h2>
+    <div class="search d-flex jc-center mb-3">
+      <input type="text" v-model="searchText" @keyup.enter="clickSearch" />
+      <span class="iconfont icon-search px-2 bg-light-1" @click="clickSearch"></span>
+    </div>
     <div id="condition" class="d-flex jc-center ai-center">
-      國家:
+      各國的發燒影片:
       <select class="ml-2 p-1" v-model="selectRegion">
         <option
           v-for="region in regionList"
@@ -15,8 +18,9 @@
 
     <div class="text-center">
       <paginate
+        ref="Pagination"
         :page-count="pageCount"
-        :click-handler="jumpTo"
+        :click-handler="jumpPage"
         :prev-text="'Prev'"
         :next-text="'Next'"
         :container-class="'pagination'"
@@ -42,7 +46,9 @@
         pageNum: 1, // 目前在第幾頁
         pageTokenPerPage: {},
         regionList: [],
-        selectRegion: "TW" // 預設選台灣
+        selectRegion: "TW", // 預設選台灣
+        searchText: "",
+        isSearch: false
       };
     },
     async created() {
@@ -66,22 +72,38 @@
     },
     watch: {
       selectRegion() {
-        this.jumpTo(this.pageNum);
+        this.isSearch = false;
+        localStorage.removeItem("searchText");
+        this.resetPageNum(1)
+        this.jumpPage(this.pageNum);
       }
     },
     methods: {
-      async jumpTo(pageNum) {
+      async jumpPage(pageNum) {
         this.pageNum = pageNum;
         this.pageTokenPerPage = JSON.parse(localStorage.pageTokenPerPage);
-        let res = await this.fetchVideos({
-          part: "snippet,statistics,contentDetails",
-          regionCode: this.selectRegion,
-          maxResults: this.count,
-          pageToken:
-            pageNum - 2 >= 0
-              ? this.pageTokenPerPage[pageNum - 2].nextPageToken
-              : null // 第一頁不須帶入pageToken
-        }); // 撈count筆
+        let res;
+        if (this.isSearch) {
+          res = await this.searchVideos({
+            pageToken:
+              pageNum - 2 >= 0
+                ? this.pageTokenPerPage[pageNum - 2].nextPageToken
+                : null // 第一頁不須帶入pageToken});
+          });
+          console.log("res", res);
+          let id = res.data.items.map(i => i.id.videoId);
+          res = await this.fetchVideoById({ id: id.join(",") });
+        } else {
+          res = await this.fetchVideos({
+            part: "snippet,statistics,contentDetails",
+            regionCode: this.selectRegion,
+            maxResults: this.count,
+            pageToken:
+              pageNum - 2 >= 0
+                ? this.pageTokenPerPage[pageNum - 2].nextPageToken
+                : null // 第一頁不須帶入pageToken
+          }); // 撈count筆
+        }
         this.videos = res.data.items;
       },
       async queryPageToken() {
@@ -124,13 +146,56 @@
             key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
           }
         });
+      },
+      searchVideos(param = {}) {
+        let searchText = localStorage.searchText;
+        return this.$http.get("search", {
+          params: {
+            type: "video",
+            q: searchText,
+            maxResults: this.count,
+            ...param,
+            key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
+          }
+        });
+      },
+      fetchVideoById(id) {
+        return this.$http.get("videos", {
+          params: {
+            part: "snippet,statistics,contentDetails",
+            ...id,
+            key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
+          }
+        });
+      },
+      resetPageNum(pageNum){
+        this.$refs.Pagination.selected = pageNum; // 搜尋預設從第一頁開始
+        this.pageNum = pageNum
+      },
+      async clickSearch() {
+        this.resetPageNum(1)
+        this.isSearch = true;
+        localStorage.searchText = this.searchText;
+        let res = await this.searchVideos();
+        console.log("res", res);
+        let id = res.data.items.map(i => i.id.videoId);
+        res = await this.fetchVideoById({ id: id.join(",") });
+        this.videos = res.data.items;
       }
     }
   };
 </script>
 <style lang="scss">
-#condition {
-  select {
+@import "../assets/scss/_variables.scss";
+.search {
+  input,
+  span {
+    border-color: map-get($colors, "light-2");
+    border-style: solid;
+    border-width: 1px;
+  }
+  span {
+    border-left: none;
   }
 }
 </style>
