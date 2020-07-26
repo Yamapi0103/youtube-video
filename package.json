@@ -2,16 +2,20 @@
   "name": "my-project",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://yamapi0103.github.io/youtubeVideo",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "bootstrap": "^3.3.0",
     "core-js": "^3.6.5",
     "dayjs": "^1.8.29",
+    "gh-pages": "^3.1.0",
     "vue": "^2.6.11",
     "vue-router": "^3.3.4",
     "vuejs-paginate": "^2.1.0"
