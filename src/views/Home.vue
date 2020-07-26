@@ -39,6 +39,7 @@
         videos: null,
         pageCount: 0, // 總共幾頁
         count: 12, // 一頁幾個
+        pageNum: 1, // 目前在第幾頁
         pageTokenPerPage: {},
         regionList: [],
         selectRegion: "TW" // 預設選台灣
@@ -47,7 +48,7 @@
     async created() {
       let res = await this.fetchVideos({
         part: "snippet,statistics,contentDetails",
-        regionCode:this.selectRegion,
+        regionCode: this.selectRegion,
         maxResults: this.count
       }); // 撈count筆
       this.videos = res.data.items;
@@ -64,23 +65,17 @@
       }
     },
     watch: {
-      async selectRegion(n) {
-        console.log("in selectRegion", n);
-        let res = await this.fetchVideos({
-          part: "snippet,statistics,contentDetails",
-          regionCode: n,
-          maxResults: this.count
-        }); // 撈count筆
-        this.videos = res.data.items;
-        this.pageCount = Math.ceil(res.data.pageInfo.totalResults / this.count);
+      selectRegion() {
+        this.jumpTo(this.pageNum);
       }
     },
     methods: {
       async jumpTo(pageNum) {
+        this.pageNum = pageNum;
         this.pageTokenPerPage = JSON.parse(localStorage.pageTokenPerPage);
         let res = await this.fetchVideos({
           part: "snippet,statistics,contentDetails",
-          regionCode:this.selectRegion,
+          regionCode: this.selectRegion,
           maxResults: this.count,
           pageToken:
             pageNum - 2 >= 0
