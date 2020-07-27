@@ -32,6 +32,8 @@
 
 <script>
   import VideoCard from "../components/videoCard";
+  import * as types from "../store/type";
+  import { mapState } from "vuex";
 
   export default {
     name: "home",
@@ -40,34 +42,38 @@
     },
     data() {
       return {
-        videos: null,
-        pageCount: 0, // 總共幾頁
+        // videos: null,
+        // pageCount: 0, // 總共幾頁
+        maxTotalResults: 200, // 最大總影片數
         count: 12, // 一頁幾個
         pageNum: 1, // 目前在第幾頁
         pageTokenPerPage: {},
-        regionList: [],
         selectRegion: "TW", // 預設選台灣
         searchText: "",
         isSearch: false
       };
     },
     async created() {
-      let res = await this.fetchVideos({
+      await this.$store.dispatch(types.GET_POPULAR_VIDEOS, {
         part: "snippet,statistics,contentDetails",
         regionCode: this.selectRegion,
         maxResults: this.count
-      }); // 撈count筆
-      this.videos = res.data.items;
-      this.pageCount = Math.ceil(res.data.pageInfo.totalResults / this.count);
+      });
+      // this.pageCount = Math.ceil(res.data.pageInfo.totalResults / this.count);
       if (!localStorage.getItem("pageTokenPerPage")) {
         this.queryPageToken();
       }
-      let resRegion = await this.fetchRegions();
-      this.regionList = resRegion.data.items;
+      this.$store.dispatch(types.GET_REGIONS);
     },
     computed: {
-      width() {
-        return window.innerWidth;
+      ...mapState({
+        videos: state => state.videos,
+        regionList: state => state.regions,
+        totalResults: state => state.pageInfo.totalResults
+      }),
+      pageCount() {
+        let results = Math.min(this.maxTotalResults, this.totalResults); // 限制最多maxTotalResults個影片
+        return Math.ceil(results / this.count);
       }
     },
     watch: {
@@ -82,19 +88,24 @@
       async jumpPage(pageNum) {
         this.pageNum = pageNum;
         this.pageTokenPerPage = JSON.parse(localStorage.pageTokenPerPage);
-        let res;
+
         if (this.isSearch) {
-          res = await this.searchVideos({
+          let res = await this.$store.dispatch(types.SEARCH_VIDEOS, {
+            searchText: localStorage.searchText,
+            maxResults: this.count,
             pageToken:
               pageNum - 2 >= 0
                 ? this.pageTokenPerPage[pageNum - 2].nextPageToken
-                : null // 第一頁不須帶入pageToken});
+                : null // 第一頁不須帶入pageToken
           });
-          console.log("res", res);
           let id = res.data.items.map(i => i.id.videoId);
-          res = await this.fetchVideoById({ id: id.join(",") });
+          this.$store.dispatch(types.GET_VIDEOS_BY_ID, {
+            id: id.join(","),
+            part: "snippet,statistics,contentDetails",
+            maxResults: this.count
+          });
         } else {
-          res = await this.fetchVideos({
+          this.$store.dispatch(types.GET_POPULAR_VIDEOS, {
             part: "snippet,statistics,contentDetails",
             regionCode: this.selectRegion,
             maxResults: this.count,
@@ -102,17 +113,24 @@
               pageNum - 2 >= 0
                 ? this.pageTokenPerPage[pageNum - 2].nextPageToken
                 : null // 第一頁不須帶入pageToken
-          }); // 撈count筆
+          });
         }
-        this.videos = res.data.items;
+        // this.videos = res.data.items;
       },
       async queryPageToken() {
         let i = 0;
-        let res = await this.fetchVideos({ maxResults: this.count });
+        let res = await this.$store.dispatch(types.GET_POPULAR_VIDEOS, {
+          maxResults: this.count
+        });
+        // let res = await this.fetchVideos({ maxResults: this.count });
         this.pageTokenPerPage[i++] = { nextPageToken: res.data.nextPageToken }; // 第一筆沒有 prevPageToken
         while (res.data.nextPageToken) {
           // 還有下一頁就繼續撈
-          res = await this.fetchVideos({
+          // res = await this.fetchVideos({
+          //   maxResults: this.count,
+          //   pageToken: this.pageTokenPerPage[i - 1].nextPageToken
+          // });
+          res = await this.$store.dispatch(types.GET_POPULAR_VIDEOS, {
             maxResults: this.count,
             pageToken: this.pageTokenPerPage[i - 1].nextPageToken
           });
@@ -126,48 +144,48 @@
           JSON.stringify(this.pageTokenPerPage)
         );
       },
-      fetchVideos(param = {}) {
-        return this.$http.get("videos", {
-          params: {
-            // part: "snippet,statistics",
-            // maxResults: "50",
-            chart: "mostPopular",
-            // regionCode: "TW",
-            ...param,
-            key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
-          }
-        });
-      },
-      fetchRegions() {
-        return this.$http.get("i18nRegions", {
-          params: {
-            part: "snippet",
-            hl: "zh_TW", // 以中文回傳
-            key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
-          }
-        });
-      },
-      searchVideos(param = {}) {
-        let searchText = localStorage.searchText;
-        return this.$http.get("search", {
-          params: {
-            type: "video",
-            q: searchText,
-            maxResults: this.count,
-            ...param,
-            key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
-          }
-        });
-      },
-      fetchVideoById(id) {
-        return this.$http.get("videos", {
-          params: {
-            part: "snippet,statistics,contentDetails",
-            ...id,
-            key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
-          }
-        });
-      },
+      // fetchVideos(param = {}) {
+      //   return this.$http.get("videos", {
+      //     params: {
+      //       // part: "snippet,statistics",
+      //       // maxResults: "50",
+      //       chart: "mostPopular",
+      //       // regionCode: "TW",
+      //       ...param,
+      //       key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
+      //     }
+      //   });
+      // },
+      // fetchRegions() {
+      //   return this.$http.get("i18nRegions", {
+      //     params: {
+      //       part: "snippet",
+      //       hl: "zh_TW", // 以中文回傳
+      //       key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
+      //     }
+      //   });
+      // },
+      // searchVideos(param = {}) {
+      //   let searchText = localStorage.searchText;
+      //   return this.$http.get("search", {
+      //     params: {
+      //       type: "video",
+      //       q: searchText,
+      //       maxResults: this.count,
+      //       ...param,
+      //       key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
+      //     }
+      //   });
+      // },
+      // fetchVideoById(id) {
+      //   return this.$http.get("videos", {
+      //     params: {
+      //       part: "snippet,statistics,contentDetails",
+      //       ...id,
+      //       key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
+      //     }
+      //   });
+      // },
       resetPageNum(pageNum) {
         this.$refs.Pagination.selected = pageNum; // 搜尋預設從第一頁開始
         this.pageNum = pageNum;
@@ -176,11 +194,16 @@
         this.resetPageNum(1);
         this.isSearch = true;
         localStorage.searchText = this.searchText;
-        let res = await this.searchVideos();
-        console.log("res", res);
+        let res = await this.$store.dispatch(types.SEARCH_VIDEOS, {
+          searchText: localStorage.searchText,
+          maxResults: this.count
+        });
         let id = res.data.items.map(i => i.id.videoId);
-        res = await this.fetchVideoById({ id: id.join(",") });
-        this.videos = res.data.items;
+        await this.$store.dispatch(types.GET_VIDEOS_BY_ID, {
+          id: id.join(","),
+          part: "snippet,statistics,contentDetails",
+          maxResults: this.count
+        });
       }
     }
   };
@@ -189,7 +212,7 @@
 @import "../assets/scss/_variables.scss";
 .iconfont {
   &.icon-search:before {
-      font-size: 16px;
+    font-size: 16px;
   }
 }
 .search {
