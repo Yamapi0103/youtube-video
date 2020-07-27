@@ -2,7 +2,7 @@
   <div class="home">
     <div class="search d-flex jc-center mb-3">
       <input type="text" v-model="searchText" @keyup.enter="clickSearch" />
-      <span class="iconfont icon-search px-2 bg-light-1" @click="clickSearch"></span>
+      <span class="iconfont icon-search p-2 bg-light-1" @click="clickSearch"></span>
     </div>
     <div id="condition" class="d-flex jc-center ai-center">
       各國的發燒影片:
@@ -74,7 +74,7 @@
       selectRegion() {
         this.isSearch = false;
         localStorage.removeItem("searchText");
-        this.resetPageNum(1)
+        this.resetPageNum(1);
         this.jumpPage(this.pageNum);
       }
     },
@@ -168,12 +168,12 @@
           }
         });
       },
-      resetPageNum(pageNum){
+      resetPageNum(pageNum) {
         this.$refs.Pagination.selected = pageNum; // 搜尋預設從第一頁開始
-        this.pageNum = pageNum
+        this.pageNum = pageNum;
       },
       async clickSearch() {
-        this.resetPageNum(1)
+        this.resetPageNum(1);
         this.isSearch = true;
         localStorage.searchText = this.searchText;
         let res = await this.searchVideos();
@@ -187,6 +187,11 @@
 </script>
 <style lang="scss">
 @import "../assets/scss/_variables.scss";
+.iconfont {
+  &.icon-search:before {
+      font-size: 16px;
+  }
+}
 .search {
   input,
   span {
