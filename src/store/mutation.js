@@ -5,6 +5,7 @@ export const state = {
     resultsPerPage:null,
     totalResults:null
   },
+  // pageCount:0,
   regions:[]
 }
 
