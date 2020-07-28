@@ -7,11 +7,7 @@
     <div id="condition" class="d-flex jc-center ai-center">
       各國的發燒影片:
       <select class="ml-2 p-1" v-model="selectRegion">
-        <option
-          v-for="region in regionList"
-          :key="region.id"
-          :value="region.id"
-        >{{region.snippet.name}}</option>
+        <option v-for="region in regionList" :key="region.id" :value="region.id">{{region.name}}</option>
       </select>
     </div>
     <videoCard :videos="videos" v-if="videos"></videoCard>
@@ -34,6 +30,7 @@
   import VideoCard from "../components/videoCard";
   import * as types from "../store/type";
   import { mapState } from "vuex";
+  import regionsConfig from '../config/regions'
 
   export default {
     name: "home",
@@ -63,7 +60,11 @@
       if (!localStorage.getItem("pageTokenPerPage")) {
         this.queryPageToken();
       }
-      this.$store.dispatch(types.GET_REGIONS);
+      if (!localStorage.regions) {
+        this.$store.dispatch(types.GET_REGIONS);
+      } else {
+        this.$store.commit('setRegions',regionsConfig)
+      }
     },
     computed: {
       ...mapState({
@@ -144,48 +145,6 @@
           JSON.stringify(this.pageTokenPerPage)
         );
       },
-      // fetchVideos(param = {}) {
-      //   return this.$http.get("videos", {
-      //     params: {
-      //       // part: "snippet,statistics",
-      //       // maxResults: "50",
-      //       chart: "mostPopular",
-      //       // regionCode: "TW",
-      //       ...param,
-      //       key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
-      //     }
-      //   });
-      // },
-      // fetchRegions() {
-      //   return this.$http.get("i18nRegions", {
-      //     params: {
-      //       part: "snippet",
-      //       hl: "zh_TW", // 以中文回傳
-      //       key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
-      //     }
-      //   });
-      // },
-      // searchVideos(param = {}) {
-      //   let searchText = localStorage.searchText;
-      //   return this.$http.get("search", {
-      //     params: {
-      //       type: "video",
-      //       q: searchText,
-      //       maxResults: this.count,
-      //       ...param,
-      //       key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
-      //     }
-      //   });
-      // },
-      // fetchVideoById(id) {
-      //   return this.$http.get("videos", {
-      //     params: {
-      //       part: "snippet,statistics,contentDetails",
-      //       ...id,
-      //       key: "AIzaSyAV_riwJ0Ow9XM9CaO3w2_2BDrxkU9rTEU"
-      //     }
-      //   });
-      // },
       resetPageNum(pageNum) {
         this.$refs.Pagination.selected = pageNum; // 搜尋預設從第一頁開始
         this.pageNum = pageNum;

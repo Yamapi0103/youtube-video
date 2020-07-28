@@ -10,6 +10,7 @@ Vue.component('paginate', Paginate)
 import 'video.js/dist/video-js.css'
 
 import store from './store'
+window.store = store
 
 Vue.config.productionTip = false
 

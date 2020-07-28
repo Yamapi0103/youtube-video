@@ -1,8 +1,10 @@
 <template>
   <div class="collect">
-    <VideoCard :videos="videoByPage" v-if="videoByPage"></VideoCard>
+    <VideoCard :videos="videoByPage" v-if="videos.length>0"></VideoCard>
+    <div v-else class="text-center text-danger mt-3">尚未收藏影片</div>
     <div class="text-center">
       <paginate
+        v-if="videos.length>0"
         :page-count="pageCount"
         :click-handler="jumpTo"
         :prev-text="'Prev'"
@@ -28,24 +30,19 @@
         // videos: null, // 全部的喜歡影片
         // pageCount: 0, // 總共幾頁
         count: 12, // 一頁幾個
-        pageNum:1,
+        pageNum: 1,
+        maxTotalResults: 200, // 最大總影片數
+        favId: JSON.parse(localStorage.id)
+
         // pageTokenPerPage: {}
         // videoByPage: [] // 每頁的喜歡影片
       };
     },
     async created() {
-      let favId = JSON.parse(localStorage.id);
-      if (favId.length <= 0) return;
-      // let res = await this.fetchVideoById({ id: favId.join(",") }); // 撈count筆
       this.$store.dispatch(types.GET_VIDEOS_BY_ID, {
-        id: favId.join(","),
-        part: "snippet,statistics,contentDetails",
-        // maxResults: this.count
+        id: this.favId.join(","),
+        part: "snippet,statistics,contentDetails"
       });
-      // this.videos = res.data.items;
-      // this.pageCount = Math.ceil(res.data.pageInfo.totalResults / this.count);
-      // this.videoByPage = this.videos.slice(0, this.count);
-      // console.log('favid',favId,this.videoByPage);
     },
     computed: {
       ...mapState({
@@ -65,7 +62,7 @@
     },
     methods: {
       jumpTo(pageNum) {
-        this.pageNum = pageNum
+        this.pageNum = pageNum;
         // this.this.videoByPage = this.videos.slice(
         //   (pageNum - 1) * this.count,
         //   pageNum * this.count
