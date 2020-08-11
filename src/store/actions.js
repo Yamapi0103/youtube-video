@@ -55,7 +55,7 @@ export const actions = {
       getVideos({ id, ...param })
         .then((res) => {
           commit('setVideos', res.data.items)
-          commit('setPageInfo', res.data.pageInfo)
+          // commit('setPageInfo', res.data.pageInfo)
           resolve(res)
         })
         .catch((err) => {
