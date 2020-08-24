@@ -14,6 +14,7 @@
 
     <div class="text-center">
       <paginate
+        v-if="videos.length>0"
         ref="Pagination"
         :page-count="pageCount"
         :click-handler="jumpPage"

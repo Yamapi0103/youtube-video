@@ -37,7 +37,7 @@
   export default {
     data() {
       return {
-        ids: JSON.parse(localStorage.getItem("id")) || []
+        ids: JSON.parse(localStorage.getItem("id")) || [],
       };
     },
     // filters: {
@@ -46,7 +46,7 @@
     //   }
     // },
     props: {
-      videos: { type: Array, required: true }
+      videos: { type: Array, required: true },
     },
     computed: {},
     methods: {
@@ -75,7 +75,7 @@
         let hour = /\d*H/.exec(str);
         let min = /\d*M/.exec(str);
         let sec = /\d*S/.exec(str);
-        let secondLayerParser = function(h, m, s) {
+        let secondLayerParser = function (h, m, s) {
           let hour = "",
             min = "",
             sec = "";
@@ -129,12 +129,17 @@
         if (digit < 4) {
           return val + "次";
         }
-        if (digit === 4) { // 一萬~十萬以內 顯示小數點後一位 eg: 5.2萬
+        if (digit === 4) {
+          // 一萬~十萬以內 顯示小數點後一位 eg: 5.2萬
           return (val / Math.pow(10, 4)).toFixed(1) + "萬次";
+        } else if (digit >= 8) {
+          if (digit > 8) {
+            return Math.floor(val / Math.pow(10, 8)) + "億次";
+          }
+          // // 一億~十億以內 顯示小數點後一位 eg: 5.2億
+          return parseFloat((val / Math.pow(10, 8)).toFixed(1)) + "億次";
         } else if (digit > 4) {
           return Math.floor(val / Math.pow(10, 4)) + "萬次";
-        } else if (digit >= 8) {
-          return Math.floor(val / Math.pow(10, 8)) + "億次";
         }
       },
       getDigit(integer) {
@@ -144,8 +149,8 @@
           integer = integer / 10;
         }
         return digit;
-      }
-    }
+      },
+    },
   };
 </script>
 
@@ -164,7 +169,7 @@
   }
 }
 .iconfont {
-  &:before{
+  &:before {
     font-size: 1.8rem;
   }
   transition: 0.2s;
