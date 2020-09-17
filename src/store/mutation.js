@@ -17,8 +17,9 @@ export const mutations = {
     state.pageInfo.totalResults = data.totalResults
   },
   setRegions(state, data) {
-    state.regions = data.map((a) => ({ id: a.id, name: a.snippet.name }))
-     if(!localStorage.regions){
+    // state.regions = data.map((a) => ({ id: a.id, name: a.snippet.name }))
+    state.regions = data
+    if (!localStorage.regions) {
       localStorage.regions = JSON.stringify(state.regions)
     }
   },

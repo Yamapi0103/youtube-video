@@ -7,6 +7,9 @@ import 'bootstrap/dist/css/bootstrap.css'
 import Paginate from 'vuejs-paginate'
 Vue.component('paginate', Paginate)
 
+import vSelect from 'vue-select'
+Vue.component('v-select', vSelect)
+
 import 'video.js/dist/video-js.css'
 
 import store from './store'

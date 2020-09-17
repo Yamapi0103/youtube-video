@@ -31,11 +31,14 @@ export const actions = {
     new Promise((resolve, reject) => {
       getRegions()
         .then((res) => {
-          commit('setRegions', res.data.items)
+          let regions = res.data.map((a) => ({ id: a.id, name: a.snippet.name }))
+          commit('setRegions', regions)
           resolve(res)
         })
         .catch((err) => {
-          commit('setRegions', regionRes)
+          // 國家撈失敗則去拿config資料
+          let regions = regionRes.map((a) => ({ id: a.id, name: a.snippet.name }))
+          commit('setRegions', regions)
           reject(err)
         })
     }),

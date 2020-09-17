@@ -6,9 +6,10 @@
     </div>
     <div id="condition" class="d-flex jc-center ai-center">
       各國的發燒影片:
-      <select class="ml-2 p-1" v-model="selectRegion">
+      <v-select class="vselect" :options="regionList" v-model="selectRegion" :reduce="religions => religions.id" label="name" ></v-select>
+      <!-- <select class="ml-2 p-1" v-model="selectRegion">
         <option v-for="region in regionList" :key="region.id" :value="region.id">{{region.name}}</option>
-      </select>
+      </select> -->
     </div>
     <videoCard :videos="videos" v-if="videos"></videoCard>
 
@@ -31,7 +32,7 @@
   import VideoCard from "../components/videoCard";
   import * as types from "../store/type";
   import { mapState } from "vuex";
-  import regionsConfig from '../config/regions'
+  // import regionsConfig from '../config/regions'
 
   export default {
     name: "home",
@@ -63,8 +64,9 @@
       }
       if (!localStorage.regions) {
         this.$store.dispatch(types.GET_REGIONS);
-      } else {
-        this.$store.commit('setRegions',regionsConfig)
+      } else {        
+        // 將local寫回store
+        this.$store.commit('setRegions',JSON.parse(localStorage.regions))
       }
     },
     computed: {
@@ -79,7 +81,8 @@
       }
     },
     watch: {
-      selectRegion() {
+      selectRegion(n) {
+        if(!n) return 
         this.isSearch = false;
         localStorage.removeItem("searchText");
         this.resetPageNum(1);
@@ -170,6 +173,10 @@
 </script>
 <style lang="scss">
 @import "../assets/scss/_variables.scss";
+@import "vue-select/src/scss/vue-select.scss";
+.vselect{
+  min-width:160px;
+}
 .iconfont {
   &.icon-search:before {
     font-size: 16px;
