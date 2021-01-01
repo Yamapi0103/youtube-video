@@ -1,26 +1,35 @@
 <template>
   <div class="video-wrap m-3 d-flex flex-wrap" v-if="videos">
-    <div class="video p-2 mb-4" v-for="(item ,index) in videos" :key="index">
+    <div class="video p-2 mb-4" v-for="(item, index) in videos" :key="index">
       <div class="h-100">
         <router-link to="/video" tag="figure">
           <img :src="item.snippet.thumbnails.medium.url" />
-          <span class="time m-1 p-1 fs-xxs">{{durationParser(item.contentDetails.duration)}}</span>
+          <span class="time m-1 p-1 fs-xxs">{{
+            durationParser(item.contentDetails.duration)
+          }}</span>
         </router-link>
         <div class="d-flex p-1 ai-center">
-          <div class="title ellipsis two-line flex-1">{{item.snippet.title}}</div>
+          <div class="title ellipsis two-line flex-1">
+            {{ item.snippet.title }}
+          </div>
           <span
             class="iconfont pl-2 icon-heart"
-            :class="{'icon-heart1':IsFav(item.id)}"
+            :class="{ 'icon-heart1': IsFav(item.id) }"
             @click="toggleFavorite(item.id)"
           ></span>
         </div>
-        <div class="channel-title p-1">{{item.snippet.channelTitle}}</div>
+        <div class="channel-title p-1">{{ item.snippet.channelTitle }}</div>
         <div class="d-flex p-1 flex-wrap">
           <!-- <div class="updateTime">上傳日期:{{item.snippet.publishedAt | date}}</div> -->
-          <div class="updateTime">上傳日期: {{publishedByNow(item.snippet.publishedAt)}}</div>
-          <div>觀看次數: {{views(item.statistics.viewCount)}}</div>
+          <div class="updateTime">
+            上傳日期: {{ publishedByNow(item.snippet.publishedAt) }}
+          </div>
+          <div>觀看次數: {{ views(item.statistics.viewCount) }}</div>
         </div>
-        <span class="iconfont icon-youtube d-iflex ai-center" @click="toYoutube(item.id)">
+        <span
+          class="iconfont icon-youtube d-iflex ai-center"
+          @click="toYoutube(item.id)"
+        >
           <span class="pl-2 text-info">前往youtube</span>
         </span>
         <!-- <div class="ellipsis five-line">
@@ -56,19 +65,24 @@
       publishedByNow(timeStr) {
         let published = new Date(timeStr);
         let now = new Date();
-        if (now.getFullYear() - published.getFullYear() > 0) {
-          return now.getUTCFullYear() - published.getFullYear() + "年前";
-        } else if (now.getMonth() - published.getMonth() > 0) {
-          return now.getMonth() - published.getMonth() + "個月前";
-        } else if (now.getDate() - published.getDate() > 0) {
-          let day = now.getDate() - published.getDate();
-          return day < 7 ? day + "天前" : parseInt(day / 7) + "週前";
-        } else if (now.getHours() - published.getHours() > 0) {
-          return now.getHours() - published.getHours() + "小時前";
-        } else if (now.getMinutes() - published.getMinutes() > 0) {
-          return now.getMinutes() - published.getMinutes() + "分鐘前";
+        let diffSec = parseInt((now - published) / 1000);
+        let diffMin = parseInt(diffSec / 60);
+        let diffHour = parseInt(diffMin / 60);
+        let diffDay = parseInt(diffHour / 24);
+        let diffMonth = parseInt(diffDay/30);
+        let diffYear = parseInt(diffDay / 365);
+        if (diffSec < 60) {
+          return diffSec + "秒前";
+        } else if (diffMin < 60) {
+          return diffMin + "分鐘前";
+        } else if (diffHour < 24) {
+          return diffHour + "小時前";
+        } else if (diffDay < 30) {
+          return diffDay < 7 ? diffDay + "天前" : parseInt(diffDay / 7) + "週前";
+        } else if(diffMonth<12){
+          return diffMonth+"個月前"
         } else {
-          return now.getSeconds() - published.getSeconds() + "秒前";
+          return diffYear +"年前"
         }
       },
       durationParser(str) {
