@@ -11,9 +11,9 @@ const routes = [
   {
     path: '/',
     component: Main,
-    children:[
+    children: [
       {
-        path:'/',
+        path: '/',
         name: 'home',
         component: Home,
       },
@@ -33,11 +33,11 @@ const routes = [
       },
     ]
   },
-  
 ]
 
 const router = new VueRouter({
   mode: 'history',
+  base: process.env.NODE_ENV === 'production' ? '/youtubeVideo/' : '/',
   routes,
 })
 
