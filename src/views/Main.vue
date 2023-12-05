@@ -1,7 +1,8 @@
 <template>
   <div>
     <div id="nav">
-      <router-link to="/">首頁</router-link>|
+      <router-link to="/">首頁</router-link>
+      |
       <router-link to="/collect">收藏</router-link>
     </div>
     <router-view />

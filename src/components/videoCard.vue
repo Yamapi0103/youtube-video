@@ -4,9 +4,9 @@
       <div class="h-100">
         <router-link to="/video" tag="figure">
           <img :src="item.snippet.thumbnails.medium.url" />
-          <span class="time m-1 p-1 fs-xxs">{{
-            durationParser(item.contentDetails.duration)
-          }}</span>
+          <span class="time m-1 p-1 fs-xxs">
+            {{ durationParser(item.contentDetails.duration) }}
+          </span>
         </router-link>
         <div class="d-flex p-1 ai-center">
           <div class="title ellipsis two-line flex-1">
@@ -41,135 +41,135 @@
 </template>
 
 <script>
-  // import dayjs from "dayjs";
+// import dayjs from "dayjs";
 
-  export default {
-    data() {
-      return {
-        ids: JSON.parse(localStorage.getItem("id")) || [],
+export default {
+  data() {
+    return {
+      ids: JSON.parse(localStorage.getItem('id')) || [],
+    };
+  },
+  // filters: {
+  //   date(val) {
+  //     return dayjs(val).format("YYYY/MM/DD");
+  //   }
+  // },
+  props: {
+    videos: { type: Array, required: true },
+  },
+  computed: {},
+  methods: {
+    toYoutube(id) {
+      window.open('https://www.youtube.com/watch?v=' + id, '_blank');
+    },
+    publishedByNow(timeStr) {
+      let published = new Date(timeStr);
+      let now = new Date();
+      let diffSec = parseInt((now - published) / 1000);
+      let diffMin = parseInt(diffSec / 60);
+      let diffHour = parseInt(diffMin / 60);
+      let diffDay = parseInt(diffHour / 24);
+      let diffMonth = parseInt(diffDay / 30);
+      let diffYear = parseInt(diffDay / 365);
+      if (diffSec < 60) {
+        return diffSec + '秒前';
+      } else if (diffMin < 60) {
+        return diffMin + '分鐘前';
+      } else if (diffHour < 24) {
+        return diffHour + '小時前';
+      } else if (diffDay < 30) {
+        return diffDay < 7 ? diffDay + '天前' : parseInt(diffDay / 7) + '週前';
+      } else if (diffMonth < 12) {
+        return diffMonth + '個月前';
+      } else {
+        return diffYear + '年前';
+      }
+    },
+    durationParser(str) {
+      let hour = /\d*H/.exec(str);
+      let min = /\d*M/.exec(str);
+      let sec = /\d*S/.exec(str);
+      let secondLayerParser = function (h, m, s) {
+        let hour = '',
+          min = '',
+          sec = '';
+        /*解析小時*/
+        /*parsing hour*/
+        if (h) {
+          hour = /\d*/.exec(h)[0] + ':';
+        } else {
+          hour = '';
+        }
+        /*解析分鐘*/
+        /*parsing minute*/
+        if (m) {
+          min = /\d*/.exec(m)[0];
+          if (min.length === 1) {
+            min = '0' + min;
+          }
+        } else {
+          min = '00';
+        }
+        /*解析秒*/
+        /*parsing second*/
+        if (s) {
+          sec = /\d*/.exec(s)[0];
+          if (sec.length === 1) {
+            sec = '0' + sec;
+          }
+        } else {
+          sec = '00';
+        }
+        /*回傳完成的影片時間格式*/
+        /*return digit time-code*/
+        return hour + min + ':' + sec;
       };
+      return secondLayerParser(hour, min, sec);
     },
-    // filters: {
-    //   date(val) {
-    //     return dayjs(val).format("YYYY/MM/DD");
-    //   }
-    // },
-    props: {
-      videos: { type: Array, required: true },
+    IsFav(id) {
+      return this.ids.includes(id);
     },
-    computed: {},
-    methods: {
-      toYoutube(id) {
-        window.open("https://www.youtube.com/watch?v=" + id, "_blank");
-      },
-      publishedByNow(timeStr) {
-        let published = new Date(timeStr);
-        let now = new Date();
-        let diffSec = parseInt((now - published) / 1000);
-        let diffMin = parseInt(diffSec / 60);
-        let diffHour = parseInt(diffMin / 60);
-        let diffDay = parseInt(diffHour / 24);
-        let diffMonth = parseInt(diffDay/30);
-        let diffYear = parseInt(diffDay / 365);
-        if (diffSec < 60) {
-          return diffSec + "秒前";
-        } else if (diffMin < 60) {
-          return diffMin + "分鐘前";
-        } else if (diffHour < 24) {
-          return diffHour + "小時前";
-        } else if (diffDay < 30) {
-          return diffDay < 7 ? diffDay + "天前" : parseInt(diffDay / 7) + "週前";
-        } else if(diffMonth<12){
-          return diffMonth+"個月前"
-        } else {
-          return diffYear +"年前"
-        }
-      },
-      durationParser(str) {
-        let hour = /\d*H/.exec(str);
-        let min = /\d*M/.exec(str);
-        let sec = /\d*S/.exec(str);
-        let secondLayerParser = function (h, m, s) {
-          let hour = "",
-            min = "",
-            sec = "";
-          /*解析小時*/
-          /*parsing hour*/
-          if (h) {
-            hour = /\d*/.exec(h)[0] + ":";
-          } else {
-            hour = "";
-          }
-          /*解析分鐘*/
-          /*parsing minute*/
-          if (m) {
-            min = /\d*/.exec(m)[0];
-            if (min.length === 1) {
-              min = "0" + min;
-            }
-          } else {
-            min = "00";
-          }
-          /*解析秒*/
-          /*parsing second*/
-          if (s) {
-            sec = /\d*/.exec(s)[0];
-            if (sec.length === 1) {
-              sec = "0" + sec;
-            }
-          } else {
-            sec = "00";
-          }
-          /*回傳完成的影片時間格式*/
-          /*return digit time-code*/
-          return hour + min + ":" + sec;
-        };
-        return secondLayerParser(hour, min, sec);
-      },
-      IsFav(id) {
-        return this.ids.includes(id);
-      },
-      toggleFavorite(id) {
-        const { ids } = this;
-        if (ids.indexOf(id) > -1) {
-          ids.splice(ids.indexOf(id), 1); // 移除
-        } else {
-          ids.push(id);
-        }
-        localStorage.id = JSON.stringify(ids); // 更新localStorage
-      },
-      views(val) {
-        let digit = this.getDigit(val);
-        if (digit < 4) {
-          return val + "次";
-        }
-        if (digit === 4) {
-          // 一萬~十萬以內 顯示小數點後一位 eg: 5.2萬
-          return (val / Math.pow(10, 4)).toFixed(1) + "萬次";
-        } else if (digit >= 8) {
-          if (digit > 8) {
-            return Math.floor(val / Math.pow(10, 8)) + "億次";
-          }
-          // // 一億~十億以內 顯示小數點後一位 eg: 5.2億
-          return parseFloat((val / Math.pow(10, 8)).toFixed(1)) + "億次";
-        } else if (digit > 4) {
-          return Math.floor(val / Math.pow(10, 4)) + "萬次";
-        }
-      },
-      getDigit(integer) {
-        let digit = -1;
-        while (integer >= 1) {
-          digit++;
-          integer = integer / 10;
-        }
-        return digit;
-      },
+    toggleFavorite(id) {
+      const { ids } = this;
+      if (ids.indexOf(id) > -1) {
+        ids.splice(ids.indexOf(id), 1); // 移除
+      } else {
+        ids.push(id);
+      }
+      localStorage.id = JSON.stringify(ids); // 更新localStorage
     },
-  };
+    views(val) {
+      let digit = this.getDigit(val);
+      if (digit < 4) {
+        return val + '次';
+      }
+      if (digit === 4) {
+        // 一萬~十萬以內 顯示小數點後一位 eg: 5.2萬
+        return (val / Math.pow(10, 4)).toFixed(1) + '萬次';
+      } else if (digit >= 8) {
+        if (digit > 8) {
+          return Math.floor(val / Math.pow(10, 8)) + '億次';
+        }
+        // // 一億~十億以內 顯示小數點後一位 eg: 5.2億
+        return parseFloat((val / Math.pow(10, 8)).toFixed(1)) + '億次';
+      } else if (digit > 4) {
+        return Math.floor(val / Math.pow(10, 4)) + '萬次';
+      }
+    },
+    getDigit(integer) {
+      let digit = -1;
+      while (integer >= 1) {
+        digit++;
+        integer = integer / 10;
+      }
+      return digit;
+    },
+  },
+};
 </script>
 
 <style lang="scss">
-@import "../assets/scss/_variables.scss";
+@import '../assets/scss/_variables.scss';
 
 .ellipsis {
   overflow: hidden;
@@ -207,7 +207,7 @@
     > div {
       padding: 5px;
       box-shadow: 0.2308rem 0.2308rem 1.2308rem rgba(0, 0, 0, 0.03);
-      border: 1px solid map-get($colors, "light-1");
+      border: 1px solid map-get($colors, 'light-1');
       border-radius: 0.3846rem;
     }
     figure {
@@ -223,8 +223,8 @@
         position: absolute;
         bottom: 0%;
         right: 0%;
-        background: map-get($colors, "dark");
-        color: map-get($colors, "white");
+        background: map-get($colors, 'dark');
+        color: map-get($colors, 'white');
         // border-radius: 0.3846rem;
       }
     }

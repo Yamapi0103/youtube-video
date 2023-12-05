@@ -1,11 +1,11 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Main from '../views/Main'
-import Home from '../views/Home'
-import Collect from '../views/Collect'
-import VideoPage from '../views/VideoPage'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Main from '../views/Main';
+import Home from '../views/Home';
+import Collect from '../views/Collect';
+import VideoPage from '../views/VideoPage';
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
@@ -31,14 +31,14 @@ const routes = [
         name: 'video',
         component: VideoPage,
       },
-    ]
+    ],
   },
-]
+];
 
 const router = new VueRouter({
   // mode: 'history',
   base: process.env.NODE_ENV === 'production' ? '/youtubeVideo/' : '/',
   routes,
-})
+});
 
-export default router
+export default router;
